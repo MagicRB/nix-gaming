@@ -18,11 +18,19 @@
     utils.lib.mkFlake {
       inherit self inputs;
 
+      lib =
+        let
+          pkgs = import nixpkgs { system = "x86_64-linux"; };
+        in
+        {
+          legendaryBuilder = import ./lib/legendary/generator.nix { inherit pkgs; };
+        };
+
       # only x86 linux is supported by wine
       supportedSystems = [ "i686-linux" "x86_64-linux" ];
 
       # add overlay to channel
-      channels.nixpkgs.overlaysBuilder = _: [ (import ./pkgs { inherit inputs; }) ];
+      channels.nixpkgs.overlaysBuilder = _: [ (import ./pkgs { inherit inputs self; }) ];
 
       # output each overlay in its own set
       overlays = utils.lib.exportOverlays { inherit (self) pkgs inputs; };

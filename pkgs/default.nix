@@ -1,4 +1,4 @@
-{ inputs }:
+{ self, inputs }:
 final: prev: {
   wowtricks = prev.winetricks.override { wine = final.wine-tkg; };
 
@@ -8,9 +8,25 @@ final: prev: {
     inherit (final) winestreamproxy;
   };
 
-  rocket-league = prev.callPackage ./rocket-league {
-    wine = final.wine-tkg;
-    winetricks = final.wowtricks;
+  #rocket-league = prev.callPackage ./rocket-league {
+  #  wine = final.wine-tkg;
+  #  winetricks = final.wowtricks;
+  #};
+
+  rocket-league = self.lib.legendaryBuilder {
+    pkgs = prev;
+    games = [
+      {
+        name = "Rocket League";
+        pname = "rocket-league";
+        tweaks = [ "dxvk" "win10" ];
+        icon = builtins.fetchurl {
+          url = "https://www.pngkey.com/png/full/16-160666_rocket-league-png.png";
+          name = "rocket-league.png";
+          sha256 = "09n90zvv8i8bk3b620b6qzhj37jsrhmxxf7wqlsgkifs4k2q8qpf";
+        };
+      }
+    ];
   };
 
   technic-launcher = prev.callPackage ./technic-launcher { };
